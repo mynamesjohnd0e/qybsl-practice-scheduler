@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QYBSL Practice Scheduler — 2026</title>
+<style>
+:root {
+  --navy:      #1B3A6B;
+  --red:       #B22222;
+  --bg:        #F4F6FA;
+  --card:      #FFFFFF;
+  --border:    #D0D5DD;
+  --text:      #1A1A2E;
+  --muted:     #6B7280;
+  --hint:      #9CA3AF;
+  --green-bg:  #DCFCE7; --green-tx: #166534; --green-bd: #86EFAC;
+  --red-bg:    #FEF2F2; --red-tx:   #991B1B; --red-bd:   #FECACA;
+  --yellow-bg: #FEFCE8; --yellow-tx:#854D0E; --yellow-bd:#FDE047;
+  --blue-bg:   #EFF6FF; --blue-tx:  #1D4ED8; --blue-bd:  #BFDBFE;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+}
+.shell { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+
+/* ── Header ── */
+.hdr {
+  background: var(--navy);
+  border-radius: 12px 12px 0 0;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hdr-left h1 { color: #fff; font-size: 16px; font-weight: 600; }
+.hdr-left p  { color: rgba(255,255,255,0.55); font-size: 12px; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.dot {
+  width: 7px; height: 7px; border-radius: 50%; background: #86EFAC; flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.hdr-stats { display: flex; gap: 20px; }
+.stat { text-align: right; }
+.stat-num { font-size: 26px; font-weight: 700; color: #FDE047; line-height: 1; }
+.stat-num.ok { color: #86EFAC; }
+.stat-lbl { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+/* ── Tabs ── */
+.tabs {
+  background: #fff;
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 11px 18px;
+  font-size: 13px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--red); font-weight: 600; }
+
+/* ── Panel ── */
+.panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 24px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Form ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+@media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } .form-grid .full { grid-column: 1; } }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
+.field-group input, .field-group select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field-group input:focus, .field-group select:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(27,58,107,.1);
+}
+.hint-text { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.avail-banner {
+  display: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+}
+.avail-banner.open  { display: block; background: var(--green-bg); color: var(--green-tx); border: 1px solid var(--green-bd); }
+.avail-banner.taken { display: block; background: var(--red-bg);   color: var(--red-tx);   border: 1px solid var(--red-bd);   }
+.form-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.foot-txt { font-size: 12px; color: var(--muted); }
+.btn-primary {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity .15s;
+}
+.btn-primary:disabled { opacity: .55; cursor: not-allowed; }
+.toast {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.toast.success { display: block; background: var(--green-bg); color: var(--green-tx); border: 1px solid var(--green-bd); }
+.toast.error   { display: block; background: var(--red-bg);   color: var(--red-tx);   border: 1px solid var(--red-bd);   }
+
+/* ── Schedule ── */
+.day-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.day-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  transition: background .15s, color .15s;
+}
+.day-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; min-width: 480px; border-collapse: collapse; }
+th { background: #F9FAFB; font-size: 11px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 13px; min-width: 100px; }
+.chip { border-left: 3px solid; border-radius: 4px; padding: 4px 7px; font-size: 12px; }
+.chip-name { font-weight: 600; }
+.chip-coach { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.empty-dash { color: var(--hint); }
+.empty-msg { text-align: center; color: var(--muted); padding: 24px; font-size: 14px; }
+
+/* ── Coverage ── */
+.metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+@media (max-width: 580px) { .metric-row { grid-template-columns: 1fr; } }
+.metric-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+.metric-num  { font-size: 28px; font-weight: 700; line-height: 1; }
+.metric-lbl  { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.div-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.div-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.div-card-hdr { padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; }
+.div-card-hdr .div-name { font-size: 13px; font-weight: 600; color: #fff; }
+.div-card-hdr .div-frac { font-size: 12px; color: rgba(255,255,255,0.75); }
+.prog-bar { height: 4px; background: rgba(255,255,255,0.25); }
+.prog-fill { height: 100%; background: #fff; transition: width .4s; }
+.div-teams { padding: 8px 12px; display: flex; flex-direction: column; gap: 3px; }
+.team-row { font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
+.team-row span:first-child { color: var(--text); }
+.team-row .chk  { color: var(--green-tx); font-weight: 600; }
+.team-row .xmrk { color: var(--red-tx);  }
+.team-slot { font-size: 11px; color: var(--muted); }
+
+/* ── Export ── */
+.export-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.export-header h3 { font-size: 14px; font-weight: 600; }
+.btn-export {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--navy); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 8px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.export-empty { text-align: center; color: var(--muted); padding: 32px; }
+
+/* ── Loading overlay ── */
+#loading {
+  position: fixed; inset: 0;
+  background: rgba(255,255,255,0.85);
+  display: flex; justify-content: center; align-items: center;
+  font-size: 15px; color: var(--muted); z-index: 999;
+}
+#loading.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div id="loading">Loading schedule…</div>
+
+<div class="shell">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>QYBSL Practice Scheduler — 2026 Season</h1>
+      <p><span class="dot"></span> Live · Auto-refreshes every 30 seconds</p>
+    </div>
+    <div class="hdr-stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-confirmed">0</div>
+        <div class="stat-lbl">Confirmed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-missing">37</div>
+        <div class="stat-lbl">Still Needed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="submit">Coach Sign-Up</button>
+    <button class="tab-btn" data-tab="schedule">Field Schedule</button>
+    <button class="tab-btn" data-tab="coverage">Coverage Report</button>
+    <button class="tab-btn" data-tab="export">Export</button>
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+
+    <!-- ── Submit Tab ── -->
+    <div id="tab-submit" class="tab-panel active">
+      <div class="form-grid">
+        <div class="field-group">
+          <label>Coach Name *</label>
+          <input type="text" id="f-coach" placeholder="e.g. Mike Sullivan">
+        </div>
+        <div class="field-group">
+          <label>Sponsor Name (optional)</label>
+          <input type="text" id="f-sponsor" placeholder="e.g. Sullivan's Plumbing">
+        </div>
+        <div class="field-group">
+          <label>Division *</label>
+          <select id="f-div" onchange="onDivChange()">
+            <option value="">— Select Division —</option>
+            <option>Instructional</option>
+            <option>Farm 8</option>
+            <option>Farm 9</option>
+            <option>Minors</option>
+            <option>Majors</option>
+            <option>Babe Ruth</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Team Number *</label>
+          <select id="f-team">
+            <option value="">— Select Division First —</option>
+          </select>
+        </div>
+        <div class="field-group full">
+          <label>Practice Field *</label>
+          <select id="f-field" onchange="checkAvail()">
+            <option value="">— Select Field —</option>
+          </select>
+          <div class="hint-text" id="field-hint"></div>
+          <div class="avail-banner" id="avail-banner"></div>
+        </div>
+        <div class="field-group">
+          <label>Practice Day *</label>
+          <select id="f-day" onchange="checkAvail()">
+            <option value="">— Select Day —</option>
+            <option value="Mon">Monday</option>
+            <option value="Tue">Tuesday</option>
+            <option value="Wed">Wednesday</option>
+            <option value="Thu">Thursday</option>
+            <option value="Fri">Friday</option>
+            <option value="Sat">Saturday</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Time Slot *</label>
+          <select id="f-slot" onchange="checkAvail()">
+            <option value="">— Select Time —</option>
+            <option value="AM">Morning (8am–12pm)</option>
+            <option value="PM">Afternoon (12pm–4pm)</option>
+            <option value="Eve">Evening (4pm–8pm)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-footer">
+        <span class="foot-txt" id="foot-txt">Loading…</span>
+        <button class="btn-primary" id="submit-btn" onclick="submitBooking()" disabled>Confirm Slot</button>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- ── Schedule Tab ── -->
+    <div id="tab-schedule" class="tab-panel">
+      <div class="day-strip" id="day-strip"></div>
+      <div class="legend" id="legend"></div>
+      <div class="tbl-wrap">
+        <table id="sched-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Morning</th>
+              <th>Afternoon</th>
+              <th>Evening</th>
+            </tr>
+          </thead>
+          <tbody id="sched-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-msg" id="sched-empty" style="display:none">No bookings yet for this day.</div>
+    </div>
+
+    <!-- ── Coverage Tab ── -->
+    <div id="tab-coverage" class="tab-panel">
+      <div class="metric-row">
+        <div class="metric-card">
+          <div class="metric-num" style="color:var(--navy)">37</div>
+          <div class="metric-lbl">Total Teams</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="cov-confirmed" style="color:var(--green-tx)">0</div>
+          <div class="metric-lbl">Confirmed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num" id="cov-missing" style="color:var(--red-tx)">37</div>
+          <div class="metric-lbl">Still Needed</div>
+        </div>
+      </div>
+      <div class="div-grid" id="div-grid"></div>
+    </div>
+
+    <!-- ── Export Tab ── -->
+    <div id="tab-export" class="tab-panel">
+      <div class="export-header">
+        <h3>All Confirmed Bookings</h3>
+        <button class="btn-export" onclick="exportCSV()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download CSV
+        </button>
+      </div>
+      <div id="export-body"></div>
+    </div>
+
+  </div><!-- /panel -->
+</div><!-- /shell -->
+
+<script>
+const FIELDS = [
+  { id:'orourke-large', name:"O'Rourke (Large)",   note:'Large diamond',        loc:'549 Quarry St'        },
+  { id:'orourke-small', name:"O'Rourke (Small)",   note:'Small diamond',        loc:'549 Quarry St'        },
+  { id:'bishop',        name:'Bishop Field',        note:'Large diamond + cages',loc:'108 Holbrook Rd'      },
+  { id:'coletta',       name:'Coletta/Merrymount',  note:'Large diamond',        loc:'Merrymount Park'      },
+  { id:'pond',          name:'Pond Street',         note:'Large diamond',        loc:'Pond St, off Rte 3A'  },
+  { id:'brill',         name:'Brill Field',         note:'Small diamond',        loc:'29 Island Ave'        },
+  { id:'faxon',         name:'Faxon Park',          note:'Small diamond',        loc:'70 Faxon Park Rd'     },
+  { id:'perkins',       name:'Perkins',             note:'Small diamond',        loc:'4 Agawam Rd'          },
+  { id:'snug',          name:'Snug Harbor',         note:'Small field',          loc:'333 Palmer St'        },
+  { id:'pageant',       name:'Pageant Field',       note:'Softball field',       loc:'1 Merrymount Pkwy'    },
+  { id:'welcomeyoung',  name:'Welcome Young',       note:'Softball + cage',      loc:'73 Sagamore St'       },
+  { id:'labrecque',     name:'LaBrecque Field',     note:'Softball field',       loc:'1000 Sea St'          },
+];
+
+const DIVS = [
+  { name:'Instructional', count:8,  color:'#16A34A', rec:'small' },
+  { name:'Farm 8',        count:6,  color:'#0284C7', rec:'small' },
+  { name:'Farm 9',        count:8,  color:'#2563EB', rec:'small' },
+  { name:'Minors',        count:5,  color:'#EA580C', rec:'large' },
+  { name:'Majors',        count:6,  color:'#7C3AED', rec:'large' },
+  { name:'Babe Ruth',     count:4,  color:'#DC2626', rec:'large' },
+];
+
+const DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAYF  = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday' };
+const SLOTF = { AM:'Morning (8am–12pm)', PM:'Afternoon (12pm–4pm)', Eve:'Evening (4pm–8pm)' };
+const SS    = { AM:'Morning', PM:'Afternoon', Eve:'Evening' };
+
+let bookings  = [];
+let schedDay  = 'Mon';
+let activeTab = 'submit';
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+function boot() {
+  // Populate field select
+  const fsel = document.getElementById('f-field');
+  FIELDS.forEach(f => {
+    const o = document.createElement('option');
+    o.value = f.id;
+    o.textContent = f.name + ' — ' + f.note;
+    fsel.appendChild(o);
+  });
+
+  // Day strip
+  const strip = document.getElementById('day-strip');
+  DAYS.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'day-btn' + (d === schedDay ? ' active' : '');
+    btn.textContent = DAYF[d];
+    btn.onclick = () => { schedDay = d; document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderSchedule(); };
+    strip.appendChild(btn);
+  });
+
+  // Legend
+  const leg = document.getElementById('legend');
+  DIVS.forEach(dv => {
+    const el = document.createElement('div');
+    el.className = 'legend-item';
+    el.innerHTML = `<span class="legend-dot" style="background:${dv.color}"></span>${dv.name}`;
+    leg.appendChild(el);
+  });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + activeTab).classList.add('active');
+      if (activeTab === 'schedule') renderSchedule();
+      if (activeTab === 'coverage') renderCoverage();
+      if (activeTab === 'export')   renderExport();
+    });
+  });
+
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('foot-txt').textContent = 'Loading…';
+
+  loadBookings();
+  setInterval(loadBookings, 30000);
+}
+
+// ── Load bookings ─────────────────────────────────────────────────────────────
+async function loadBookings() {
+  try {
+    const res = await fetch('/api/bookings');
+    bookings = await res.json();
+    updateStats();
+    if (activeTab === 'schedule') renderSchedule();
+    if (activeTab === 'coverage') renderCoverage();
+    if (activeTab === 'export')   renderExport();
+    onDivChange();
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('foot-txt').textContent = bookings.length + ' booking(s) confirmed';
+    document.getElementById('loading').classList.add('hidden');
+  } catch (e) {
+    console.error('Failed to load bookings', e);
+    document.getElementById('foot-txt').textContent = 'Error loading data — retrying…';
+    document.getElementById('loading').classList.add('hidden');
+  }
+}
+
+// ── Division change ───────────────────────────────────────────────────────────
+function onDivChange() {
+  const div = document.getElementById('f-div').value;
+  const tsel = document.getElementById('f-team');
+  const hint = document.getElementById('field-hint');
+
+  tsel.innerHTML = '';
+  if (!div) {
+    tsel.innerHTML = '<option value="">— Select Division First —</option>';
+    hint.textContent = '';
+    return;
+  }
+
+  const dv = DIVS.find(d => d.name === div);
+  for (let i = 1; i <= dv.count; i++) {
+    const tid = div + '-' + i;
+    const existing = bookings.find(b => b.teamId === tid);
+    const o = document.createElement('option');
+    o.value = i;
+    if (existing) {
+      o.textContent = `Team ${i} ✓ — ${DAYF[existing.day]}, ${SS[existing.slot]}`;
+    } else {
+      o.textContent = `Team ${i}`;
+    }
+    tsel.appendChild(o);
+  }
+
+  hint.textContent = dv.rec === 'small'
+    ? 'Recommended: small diamond field (Brill, Faxon, Perkins, Snug Harbor, O\'Rourke Small)'
+    : 'Recommended: large diamond field (Bishop, Coletta, Pond Street, O\'Rourke Large)';
+
+  checkAvail();
+}
+
+// ── Availability check ────────────────────────────────────────────────────────
+function checkAvail() {
+  const field = document.getElementById('f-field').value;
+  const day   = document.getElementById('f-day').value;
+  const slot  = document.getElementById('f-slot').value;
+  const banner = document.getElementById('avail-banner');
+
+  if (!field || !day || !slot) {
+    banner.className = 'avail-banner';
+    banner.textContent = '';
+    return;
+  }
+
+  const conflict = bookings.find(b => b.field === field && b.day === day && b.slot === slot);
+  if (conflict) {
+    banner.className = 'avail-banner taken';
+    banner.textContent = `Taken by ${conflict.teamLabel} (Coach: ${conflict.coach})`;
+  } else {
+    banner.className = 'avail-banner open';
+    banner.textContent = 'Available';
+  }
+}
+
+// ── Submit booking ────────────────────────────────────────────────────────────
+async function submitBooking() {
+  const coach   = document.getElementById('f-coach').value.trim();
+  const sponsor = document.getElementById('f-sponsor').value.trim();
+  const div     = document.getElementById('f-div').value;
+  const team    = document.getElementById('f-team').value;
+  const field   = document.getElementById('f-field').value;
+  const day     = document.getElementById('f-day').value;
+  const slot    = document.getElementById('f-slot').value;
+
+  if (!coach || !div || !team || !field || !day || !slot) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  const dv    = DIVS.find(d => d.name === div);
+  const color = dv ? dv.color : '#1B3A6B';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  try {
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coach, sponsor, division: div, team, field, day, slot, color })
+    });
+    const data = await res.json();
+
+    if (res.status === 201) {
+      showToast(`Slot confirmed for ${data.teamLabel}!`, 'success');
+      document.getElementById('f-coach').value   = '';
+      document.getElementById('f-sponsor').value = '';
+      document.getElementById('f-div').value     = '';
+      document.getElementById('f-team').innerHTML = '<option value="">— Select Division First —</option>';
+      document.getElementById('f-field').value   = '';
+      document.getElementById('f-day').value     = '';
+      document.getElementById('f-slot').value    = '';
+      document.getElementById('avail-banner').className = 'avail-banner';
+      document.getElementById('field-hint').textContent = '';
+      await loadBookings();
+    } else if (res.status === 409) {
+      showToast(data.message, 'error');
+    } else {
+      showToast(data.error || 'An error occurred. Please try again.', 'error');
+    }
+  } catch (e) {
+    showToast('Network error. Please check your connection and retry.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Slot';
+  }
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, 5500);
+}
+
+// ── Update stats ──────────────────────────────────────────────────────────────
+function updateStats() {
+  const unique = new Set(bookings.map(b => b.teamId)).size;
+  const missing = 37 - unique;
+
+  const sc = document.getElementById('stat-confirmed');
+  const sm = document.getElementById('stat-missing');
+  sc.textContent = unique;
+  sm.textContent = missing;
+  sc.className = 'stat-num' + (unique === 37 ? ' ok' : '');
+  sm.className = 'stat-num' + (missing === 0  ? ' ok' : '');
+
+  document.getElementById('cov-confirmed').textContent = unique;
+  document.getElementById('cov-missing').textContent   = missing;
+}
+
+// ── Render schedule ───────────────────────────────────────────────────────────
+function renderSchedule() {
+  const tbody = document.getElementById('sched-body');
+  const slots = ['AM','PM','Eve'];
+  let anyBooked = false;
+  tbody.innerHTML = '';
+
+  FIELDS.forEach(f => {
+    const tr = document.createElement('tr');
+    let tdHTML = `<td><strong>${f.name}</strong><div style="font-size:11px;color:var(--muted)">${f.loc}</div></td>`;
+    slots.forEach(s => {
+      const b = bookings.find(bk => bk.field === f.id && bk.day === schedDay && bk.slot === s);
+      if (b) {
+        anyBooked = true;
+        tdHTML += `<td><div class="chip" style="border-left-color:${b.color};background:${b.color}18">
+          <div class="chip-name">${escHtml(b.teamLabel)}</div>
+          <div class="chip-coach">${escHtml(b.coach)}</div>
+        </div></td>`;
+      } else {
+        tdHTML += `<td><span class="empty-dash">—</span></td>`;
+      }
+    });
+    tr.innerHTML = tdHTML;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('sched-empty').style.display = anyBooked ? 'none' : 'block';
+  document.getElementById('sched-table').style.display  = anyBooked ? '' : 'none';
+}
+
+// ── Render coverage ───────────────────────────────────────────────────────────
+function renderCoverage() {
+  const grid = document.getElementById('div-grid');
+  grid.innerHTML = '';
+
+  DIVS.forEach(dv => {
+    const confirmed = [];
+    for (let i = 1; i <= dv.count; i++) {
+      const b = bookings.find(bk => bk.teamId === dv.name + '-' + i);
+      confirmed.push(b || null);
+    }
+    const cnt = confirmed.filter(Boolean).length;
+    const pct = Math.round((cnt / dv.count) * 100);
+
+    let teamsHTML = '';
+    for (let i = 0; i < dv.count; i++) {
+      const b = confirmed[i];
+      if (b) {
+        teamsHTML += `<div class="team-row"><span>Team ${i+1}</span><span class="chk">✓ ${DAYF[b.day]}, ${SS[b.slot]}</span></div>`;
+      } else {
+        teamsHTML += `<div class="team-row"><span>Team ${i+1}</span><span class="xmrk">✗ Not scheduled</span></div>`;
+      }
+    }
+
+    const card = document.createElement('div');
+    card.className = 'div-card';
+    card.innerHTML = `
+      <div class="div-card-hdr" style="background:${dv.color}">
+        <span class="div-name">${dv.name}</span>
+        <span class="div-frac">${cnt}/${dv.count} · ${pct}%</span>
+      </div>
+      <div class="prog-bar" style="background:${dv.color}44">
+        <div class="prog-fill" style="width:${pct}%;background:${dv.color}"></div>
+      </div>
+      <div class="div-teams">${teamsHTML}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ── Render export ─────────────────────────────────────────────────────────────
+function renderExport() {
+  const container = document.getElementById('export-body');
+
+  if (!bookings.length) {
+    container.innerHTML = '<div class="export-empty">No bookings yet.</div>';
+    return;
+  }
+
+  const sorted = [...bookings].sort((a, b) => {
+    const ai = DIVS.findIndex(d => d.name === a.division);
+    const bi = DIVS.findIndex(d => d.name === b.division);
+    if (ai !== bi) return ai - bi;
+    return a.team - b.team;
+  });
+
+  let html = `<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Division</th><th>Team #</th><th>Sponsor / Team Name</th>
+      <th>Coach</th><th>Field</th><th>Day</th><th>Time Slot</th>
+    </tr></thead><tbody>`;
+
+  sorted.forEach(b => {
+    const f = FIELDS.find(f => f.id === b.field);
+    html += `<tr>
+      <td>${escHtml(b.division)}</td>
+      <td>${b.team}</td>
+      <td>${escHtml(b.teamLabel)}</td>
+      <td>${escHtml(b.coach)}</td>
+      <td>${f ? escHtml(f.name) : escHtml(b.field)}</td>
+      <td>${DAYF[b.day] || b.day}</td>
+      <td>${SLOTF[b.slot] || b.slot}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+function exportCSV() {
+  const sorted = [...bookings].sort((a, b) => {
+    const ai = DIVS.findIndex(d => d.name === a.division);
+    const bi = DIVS.findIndex(d => d.name === b.division);
+    if (ai !== bi) return ai - bi;
+    return a.team - b.team;
+  });
+
+  const rows = [['Division','Team #','Sponsor/Team Name','Coach','Field','Location','Day','Time Slot']];
+  sorted.forEach(b => {
+    const f = FIELDS.find(f => f.id === b.field);
+    rows.push([
+      b.division,
+      b.team,
+      b.teamLabel,
+      b.coach,
+      f ? f.name : b.field,
+      f ? f.loc : '',
+      DAYF[b.day] || b.day,
+      SLOTF[b.slot] || b.slot
+    ]);
+  });
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'QYBSL_Practice_Schedule_2026.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+boot();
+</script>
+</body>
+</html>
