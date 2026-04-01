@@ -1,0 +1,38 @@
+name: Backup Bookings
+
+on:
+  schedule:
+    # Runs every 6 hours — adjust as needed (cron syntax: minute hour day month weekday)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Fetch live bookings and generate CSV
+        run: node scripts/export-csv.js https://qybsl-practice-scheduler.onrender.com
+
+      - name: Commit backup if bookings changed
+        run: |
+          git config user.name  "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add backup/
+          if git diff --staged --quiet; then
+            echo "No changes — bookings unchanged since last backup."
+          else
+            git commit -m "Auto-backup bookings $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
