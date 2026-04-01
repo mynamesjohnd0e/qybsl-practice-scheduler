@@ -15,8 +15,9 @@ let firestoreDB = null;
 
 if (USE_FIRESTORE) {
   const { Firestore } = require('@google-cloud/firestore');
-  firestoreDB = new Firestore({ projectId: process.env.FIRESTORE_PROJECT_ID });
-  console.log(`Storage: Firestore (project: ${process.env.FIRESTORE_PROJECT_ID})`);
+  const databaseId = process.env.FIRESTORE_DATABASE_ID || '(default)';
+  firestoreDB = new Firestore({ projectId: process.env.FIRESTORE_PROJECT_ID, databaseId });
+  console.log(`Storage: Firestore (project: ${process.env.FIRESTORE_PROJECT_ID}, db: ${databaseId})`);
 } else {
   console.log('Storage: local file (bookings.json)');
 }
