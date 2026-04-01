@@ -23,7 +23,7 @@ jobs:
           node-version: '18'
 
       - name: Fetch live bookings and generate CSV
-        run: node scripts/export-csv.js https://qybsl-practice-scheduler.onrender.com
+        run: node scripts/export-csv.js https://qybsl-practice-scheduler-108255832800.us-east1.run.app
 
       - name: Commit backup if bookings changed
         run: |
