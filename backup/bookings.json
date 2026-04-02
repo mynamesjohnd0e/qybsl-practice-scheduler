@@ -40,5 +40,19 @@
     "slot": "Eve",
     "color": "#2563EB",
     "createdAt": "2026-04-01T10:59:52.923Z"
+  },
+  {
+    "id": 1775088169239,
+    "teamId": "Majors-2",
+    "teamLabel": "Majors Team 2",
+    "coach": "Justin Tang",
+    "sponsor": "",
+    "division": "Majors",
+    "team": 2,
+    "field": "orourke-small",
+    "day": "Mon",
+    "slot": "Eve",
+    "color": "#7C3AED",
+    "createdAt": "2026-04-02T00:02:49.239Z"
   }
 ]
