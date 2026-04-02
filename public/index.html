@@ -241,7 +241,7 @@ td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: 
         <div class="stat-lbl">Confirmed</div>
       </div>
       <div class="stat">
-        <div class="stat-num" id="stat-missing">37</div>
+        <div class="stat-num" id="stat-missing">43</div>
         <div class="stat-lbl">Still Needed</div>
       </div>
     </div>
@@ -305,15 +305,19 @@ td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: 
             <option value="Thu">Thursday</option>
             <option value="Fri">Friday</option>
             <option value="Sat">Saturday</option>
+            <option value="Sun">Sunday</option>
           </select>
         </div>
         <div class="field-group">
           <label>Time Slot *</label>
           <select id="f-slot" onchange="checkAvail()">
             <option value="">— Select Time —</option>
-            <option value="AM">Morning (8am–12pm)</option>
-            <option value="PM">Afternoon (12pm–4pm)</option>
-            <option value="Eve">Evening (4pm–8pm)</option>
+            <option value="8am">Early Morning (8am–10am)</option>
+            <option value="10am">Late Morning (10am–12pm)</option>
+            <option value="12pm">Early Afternoon (12pm–2pm)</option>
+            <option value="2pm">Late Afternoon (2pm–4pm)</option>
+            <option value="4pm">Early Evening (4pm–6pm)</option>
+            <option value="6pm">Evening (6pm–8pm)</option>
           </select>
         </div>
       </div>
@@ -333,9 +337,12 @@ td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: 
           <thead>
             <tr>
               <th>Field</th>
-              <th>Morning</th>
-              <th>Afternoon</th>
-              <th>Evening</th>
+              <th>8–10am</th>
+              <th>10am–12pm</th>
+              <th>12–2pm</th>
+              <th>2–4pm</th>
+              <th>4–6pm</th>
+              <th>6–8pm</th>
             </tr>
           </thead>
           <tbody id="sched-body"></tbody>
@@ -348,7 +355,7 @@ td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: 
     <div id="tab-coverage" class="tab-panel">
       <div class="metric-row">
         <div class="metric-card">
-          <div class="metric-num" style="color:var(--navy)">37</div>
+          <div class="metric-num" style="color:var(--navy)">43</div>
           <div class="metric-lbl">Total Teams</div>
         </div>
         <div class="metric-card">
@@ -356,7 +363,7 @@ td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: 
           <div class="metric-lbl">Confirmed</div>
         </div>
         <div class="metric-card">
-          <div class="metric-num" id="cov-missing" style="color:var(--red-tx)">37</div>
+          <div class="metric-num" id="cov-missing" style="color:var(--red-tx)">43</div>
           <div class="metric-lbl">Still Needed</div>
         </div>
       </div>
@@ -401,12 +408,13 @@ const DIVS = [
   { name:'Minors',        count:5,  color:'#EA580C', rec:'large' },
   { name:'Majors',        count:6,  color:'#7C3AED', rec:'large' },
   { name:'Babe Ruth',     count:4,  color:'#DC2626', rec:'large' },
+  { name:'Softball',      count:6,  color:'#DB2777', rec:'small' },
 ];
 
-const DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat'];
-const DAYF  = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday' };
-const SLOTF = { AM:'Morning (8am–12pm)', PM:'Afternoon (12pm–4pm)', Eve:'Evening (4pm–8pm)' };
-const SS    = { AM:'Morning', PM:'Afternoon', Eve:'Evening' };
+const DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAYF  = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Sun:'Sunday' };
+const SLOTF = { '8am':'Early Morning (8am–10am)', '10am':'Late Morning (10am–12pm)', '12pm':'Early Afternoon (12pm–2pm)', '2pm':'Late Afternoon (2pm–4pm)', '4pm':'Early Evening (4pm–6pm)', '6pm':'Evening (6pm–8pm)' };
+const SS    = { '8am':'8–10am', '10am':'10am–12pm', '12pm':'12–2pm', '2pm':'2–4pm', '4pm':'4–6pm', '6pm':'6–8pm' };
 
 let bookings  = [];
 let schedDay  = 'Mon';
@@ -606,13 +614,13 @@ function showToast(msg, type) {
 // ── Update stats ──────────────────────────────────────────────────────────────
 function updateStats() {
   const unique = new Set(bookings.map(b => b.teamId)).size;
-  const missing = 37 - unique;
+  const missing = 43 - unique;
 
   const sc = document.getElementById('stat-confirmed');
   const sm = document.getElementById('stat-missing');
   sc.textContent = unique;
   sm.textContent = missing;
-  sc.className = 'stat-num' + (unique === 37 ? ' ok' : '');
+  sc.className = 'stat-num' + (unique === 43 ? ' ok' : '');
   sm.className = 'stat-num' + (missing === 0  ? ' ok' : '');
 
   document.getElementById('cov-confirmed').textContent = unique;
@@ -622,7 +630,7 @@ function updateStats() {
 // ── Render schedule ───────────────────────────────────────────────────────────
 function renderSchedule() {
   const tbody = document.getElementById('sched-body');
-  const slots = ['AM','PM','Eve'];
+  const slots = ['8am','10am','12pm','2pm','4pm','6pm'];
   let anyBooked = false;
   tbody.innerHTML = '';
 

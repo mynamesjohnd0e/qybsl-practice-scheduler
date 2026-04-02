@@ -27,10 +27,10 @@ const FIELDS = {
   'labrecque':     { name: 'LaBrecque Field',     loc: '1000 Sea St'         },
 };
 
-const DIV_ORDER = ['Instructional','Farm 8','Farm 9','Minors','Majors','Babe Ruth'];
+const DIV_ORDER = ['Instructional','Farm 8','Farm 9','Minors','Majors','Babe Ruth','Softball'];
 
-const DAYF = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday' };
-const SLOTF = { AM:'Morning (8am–12pm)', PM:'Afternoon (12pm–4pm)', Eve:'Evening (4pm–8pm)' };
+const DAYF = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Sun:'Sunday' };
+const SLOTF = { '8am':'Early Morning (8am–10am)', '10am':'Late Morning (10am–12pm)', '12pm':'Early Afternoon (12pm–2pm)', '2pm':'Late Afternoon (2pm–4pm)', '4pm':'Early Evening (4pm–6pm)', '6pm':'Evening (6pm–8pm)' };
 
 function csvRow(fields) {
   return fields.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',');
