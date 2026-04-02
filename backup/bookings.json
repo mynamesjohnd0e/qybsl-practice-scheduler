@@ -68,5 +68,61 @@
     "slot": "Eve",
     "color": "#7C3AED",
     "createdAt": "2026-04-02T01:29:18.099Z"
+  },
+  {
+    "id": 1775134793041,
+    "division": "Minors",
+    "field": "faxon",
+    "day": "Tue",
+    "slot": "Eve",
+    "color": "#EA580C",
+    "createdAt": "2026-04-02T12:59:53.041Z",
+    "coach": "Marty Muscato",
+    "sponsor": "Quincy Fire",
+    "team": 5,
+    "teamId": "Minors-5",
+    "teamLabel": "Quincy Fire (Minors #5)"
+  },
+  {
+    "id": 1775134958841,
+    "division": "Minors",
+    "field": "faxon",
+    "day": "Wed",
+    "slot": "Eve",
+    "color": "#EA580C",
+    "createdAt": "2026-04-02T13:02:38.841Z",
+    "coach": "Minors Block",
+    "sponsor": "Bye-Wed",
+    "teamId": "Bye-Wed",
+    "teamLabel": "Minors-Bye-Wed",
+    "team": 6
+  },
+  {
+    "id": 1775139323558,
+    "coach": "James Gay",
+    "sponsor": "Paul Rogers",
+    "team": 1,
+    "field": "coletta",
+    "day": "Tue",
+    "slot": "Eve",
+    "color": "#16A34A",
+    "createdAt": "2026-04-02T14:15:23.558Z",
+    "division": "Minors",
+    "teamId": "Minors-1",
+    "teamLabel": "Paul Rogers (Minors #1)"
+  },
+  {
+    "id": 1775149311531,
+    "coach": "Minors Block",
+    "sponsor": "Bye-Thur",
+    "division": "Minors",
+    "field": "faxon",
+    "day": "Thu",
+    "slot": "Eve",
+    "color": "#EA580C",
+    "createdAt": "2026-04-02T17:01:51.531Z",
+    "team": 8,
+    "teamId": "Minors-Bye-Thurs",
+    "teamLabel": "Minors-Bye-Thurs"
   }
 ]
