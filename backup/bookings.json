@@ -54,5 +54,19 @@
     "slot": "Eve",
     "color": "#7C3AED",
     "createdAt": "2026-04-02T00:02:49.239Z"
+  },
+  {
+    "id": 1775093358099,
+    "teamId": "Majors-4",
+    "teamLabel": "Attorney Jack Greene (Majors #4)",
+    "coach": "Greg Hill",
+    "sponsor": "Attorney Jack Greene",
+    "division": "Majors",
+    "team": 4,
+    "field": "brill",
+    "day": "Mon",
+    "slot": "Eve",
+    "color": "#7C3AED",
+    "createdAt": "2026-04-02T01:29:18.099Z"
   }
 ]
