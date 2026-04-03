@@ -22,8 +22,6 @@ const FIELDS = {
   'faxon':         { name: 'Faxon Park',          loc: '70 Faxon Park Rd'    },
   'perkins':       { name: 'Perkins',             loc: '4 Agawam Rd'         },
   'snug':          { name: 'Snug Harbor',         loc: '333 Palmer St'       },
-  'pageant':       { name: 'Pageant Field',       loc: '1 Merrymount Pkwy'   },
-  'welcomeyoung':  { name: 'Welcome Young',       loc: '73 Sagamore St'      },
   'labrecque':     { name: 'LaBrecque Field',     loc: '1000 Sea St'         },
 };
 
