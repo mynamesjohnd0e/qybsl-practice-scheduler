@@ -16,7 +16,6 @@
   {
     "id": 1775178506764,
     "teamId": "Majors-1",
-    "teamLabel": "Elks (Majors #1)",
     "coach": "Justin Tang",
     "sponsor": "Elks",
     "division": "Majors",
@@ -25,12 +24,12 @@
     "day": "Mon",
     "slot": "6pm",
     "color": "#7C3AED",
-    "createdAt": "2026-04-03T01:08:26.764Z"
+    "createdAt": "2026-04-03T01:08:26.764Z",
+    "teamLabel": "Elks (Majors)"
   },
   {
     "id": 1775178597621,
     "teamId": "Majors-2",
-    "teamLabel": "Attorney Jack Greene (Majors #2)",
     "coach": "Greg Hill",
     "sponsor": "Attorney Jack Greene",
     "division": "Majors",
@@ -39,20 +38,63 @@
     "day": "Mon",
     "slot": "6pm",
     "color": "#7C3AED",
-    "createdAt": "2026-04-03T01:09:57.621Z"
+    "createdAt": "2026-04-03T01:09:57.621Z",
+    "teamLabel": "AJG (Majors #2)"
   },
   {
     "id": 1775178681190,
     "teamId": "Majors-3",
-    "teamLabel": "Majors Team 3",
     "coach": "Ashley",
-    "sponsor": "",
     "division": "Majors",
     "team": 3,
     "field": "orourke-small",
     "day": "Wed",
     "slot": "4pm",
     "color": "#7C3AED",
-    "createdAt": "2026-04-03T01:11:21.190Z"
+    "createdAt": "2026-04-03T01:11:21.190Z",
+    "sponsor": "Koehanes",
+    "teamLabel": "Keohanes (Majors)"
+  },
+  {
+    "id": 1775179456207,
+    "teamId": "Minors-2",
+    "coach": "Sollinger/Sommers",
+    "sponsor": "(Minors/Farm 9)",
+    "division": "Minors",
+    "team": 2,
+    "field": "brill",
+    "day": "Mon",
+    "slot": "4pm",
+    "color": "#EA580C",
+    "createdAt": "2026-04-03T01:24:16.207Z",
+    "teamLabel": "(Minors/Farm 9)"
+  },
+  {
+    "id": 1775179657897,
+    "teamId": "Majors-4",
+    "coach": "Thomas Rigia",
+    "sponsor": "McDonald",
+    "division": "Majors",
+    "team": 4,
+    "field": "perkins",
+    "day": "Wed",
+    "slot": "6pm",
+    "color": "#7C3AED",
+    "createdAt": "2026-04-03T01:27:37.897Z",
+    "teamLabel": "McDonald (Majors)"
+  },
+  {
+    "id": 1775181821371,
+    "teamId": "Majors-5",
+    "teamLabel": "Erin Feeney RE (Majors #5)",
+    "coach": "Jose Feliciano",
+    "sponsor": "Erin Feeney RE",
+    "division": "Majors",
+    "team": 5,
+    "field": "pond",
+    "day": "Mon",
+    "slot": "6pm",
+    "color": "#7C3AED",
+    "createdAt": "2026-04-03T02:03:41.371Z"
   }
 ]
