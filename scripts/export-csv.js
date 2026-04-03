@@ -27,7 +27,7 @@ const FIELDS = {
   'labrecque':     { name: 'LaBrecque Field',     loc: '1000 Sea St'         },
 };
 
-const DIV_ORDER = ['Instructional','Farm 8','Farm 9','Minors','Majors','Babe Ruth','Softball'];
+const DIV_ORDER = ['Instructional','Farm 8','Farm 9','Minors','Majors','Babe Ruth'];
 
 const DAYF = { Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Sun:'Sunday' };
 const SLOTF = { '8am':'Early Morning (8am–10am)', '10am':'Late Morning (10am–12pm)', '12pm':'Early Afternoon (12pm–2pm)', '2pm':'Late Afternoon (2pm–4pm)', '4pm':'Early Evening (4pm–6pm)', '6pm':'Evening (6pm–8pm)' };

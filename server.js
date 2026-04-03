@@ -28,10 +28,9 @@ const DIVISIONS = {
   'Farm 9':        8,
   'Minors':        5,
   'Majors':        6,
-  'Babe Ruth':     4,
-  'Softball':      6
+  'Babe Ruth':     4
 };
-const TOTAL_TEAMS = 43;
+const TOTAL_TEAMS = 37;
 
 // ── Storage helpers ───────────────────────────────────────────────────────────
 async function readDB() {
